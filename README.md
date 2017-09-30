@@ -6,8 +6,12 @@ Elevator automates elevation of privileges in Linux systems. It fingerprints the
 
 
 ```
-wget --no-check-certificate https://raw.githubusercontent.com/guifre/Elevator/master/elevator.py; ./elevator.py
+wget --no-check-certificate https://raw.githubusercontent.com/guifre/Elevator/master/elevator.py; chmod +x elevator; ./elevator.py
 ```
+
+## Demo
+
+[![Elevator demo](https://img.youtube.com/vi/VCQ7dNVktjs/0.jpg)](https://www.youtube.com/watch?v=VCQ7dNVktjs)
 
 ## WARNING
 Executing this script will potentially download and run hundreds of exploits, which can cause permanent damage to the operating system.
