@@ -44,8 +44,8 @@ def run(exploit, url_opener):
                     end = True
                     sys.exit()
                 o.close()
-    except Exception as e:
-        print str(e)
+    except Exception:
+        pass
     run_command('rm %s' % filename)
     run_command('rm %s' % filename[:-2])
 

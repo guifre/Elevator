@@ -6,7 +6,7 @@ Escalator automates elevation of privileges in Linux systems. It fingerprints th
 
 
 ```
-wget escalator; ./escalator
+wget --no-check-certificate https://raw.githubusercontent.com/guifre/Escalator/master/escalator.py; ./escalator.py
 ```
 
 ## WARNING
