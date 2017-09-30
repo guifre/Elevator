@@ -2,7 +2,7 @@ import unittest
 
 import mock as mock
 
-from escalator import find_keywords, run_escalator
+from elevator import find_keywords, run_escalator
 
 
 class EscalatorTest(unittest.TestCase):
