@@ -1,4 +1,4 @@
-# Escalator [![Build Status](https://travis-ci.org/guifre/escalator.svg?branch=master)](https://travis-ci.org/guifre/escalator.svg?branch=master) [![Coverage Status](https://coveralls.io/repos/github/guifre/escalator/badge.svg?branch=master)](https://coveralls.io/github/guifre/escalator?branch=master)
+# Escalator [![Build Status](https://travis-ci.org/guifre/Escalator.svg?branch=master)](https://travis-ci.org/guifre/Escalator.svg?branch=master) [![Coverage Status](https://coveralls.io/repos/github/guifre/Escalator/badge.svg?branch=master)](https://coveralls.io/github/guifre/Escalator?branch=master)
 
 Escalator automates elevation of privileges in Linux systems. It fingerprints the operating system version, downloads, compiles, and executes the relevant exploits from `exploit-db`.
 
