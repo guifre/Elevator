@@ -11,7 +11,8 @@ wget --no-check-certificate https://raw.githubusercontent.com/guifre/Elevator/ma
 
 ## Demo
 
-[![Elevator demo](https://img.youtube.com/vi/VCQ7dNVktjs/0.jpg)](https://www.youtube.com/watch?v=VCQ7dNVktjs)
+[![Elevator demo](https://github.com/guifre/guifre.github.io/blob/master/elevator.gif)](https://www.youtube.com/watch?v=VCQ7dNVktjs)
+
 
 ## WARNING
 Executing this script will potentially download and run hundreds of exploits, which can cause permanent damage to the operating system.
